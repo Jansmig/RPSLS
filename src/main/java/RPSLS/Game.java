@@ -1,10 +1,14 @@
 package RPSLS;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -15,8 +19,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.InputMismatchException;
+import java.util.Random;
 import java.util.Scanner;
+
+import static RPSLS.Tile.*;
 
 public class Game extends Application {
 
@@ -46,6 +52,73 @@ public class Game extends Application {
         return root;
     }
 
+    public static void checkRockEffect (Tile pTile, Tile cTile) {
+        if (pTile.getItem() == 1 && cTile.getItem() == 3 || cTile.getItem() == 4) {
+            textToDisplay = pName + " wins!";
+            pVictoryCounter++;
+        } else if (pTile.getItem() == 1 && cTile.getItem() == 2 || cTile.getItem() == 5) {
+            textToDisplay = "Computer wins!";
+            cVictoryCounter++;
+        } else {
+            textToDisplay = "Draw!";
+        }
+    }
+
+    public static void checkPaperEffect (Tile pTile, Tile cTile) {
+        if (pTile.getItem() == 2 && cTile.getItem() == 5 || cTile.getItem() == 1) {
+            textToDisplay = pName + " wins!";
+            pVictoryCounter++;
+        } else if (pTile.getItem() == 2 && cTile.getItem() == 3 || cTile.getItem() == 4) {
+            textToDisplay = "Computer wins!";
+            cVictoryCounter++;
+        } else {
+            textToDisplay = "Draw!";
+        }
+    }
+
+    public static void checkScissorsEffect (Tile pTile, Tile cTile) {
+        if (pTile.getItem() == 3 && cTile.getItem() == 2 || cTile.getItem() == 4) {
+            textToDisplay = pName + " wins!";
+            pVictoryCounter++;
+        } else if (pTile.getItem() == 3 && cTile.getItem() == 1 || cTile.getItem() == 5) {
+            textToDisplay = "Computer wins!";
+            cVictoryCounter++;
+        } else {
+            textToDisplay = "Draw!";
+        }
+    }
+
+    public static void checkLizardEffect (Tile pTile, Tile cTile) {
+        if (pTile.getItem() == 4 && cTile.getItem() == 2 || cTile.getItem() == 5) {
+            textToDisplay = pName + " wins!";
+            pVictoryCounter++;
+        } else if (pTile.getItem() == 4 && cTile.getItem() == 1 || cTile.getItem() == 3) {
+            textToDisplay = "Computer wins!";
+            cVictoryCounter++;
+        } else {
+            textToDisplay = "Draw!";
+        }
+    }
+
+    public static void checkSpockEffect (Tile pTile, Tile cTile) {
+        if (pTile.getItem() == 5 && cTile.getItem() == 1 || cTile.getItem() == 3) {
+            textToDisplay = pName + " wins!";
+            pVictoryCounter++;
+        } else if (pTile.getItem() == 5 && cTile.getItem() == 2 || cTile.getItem() == 4) {
+            textToDisplay = "Computer wins!";
+            cVictoryCounter++;
+        } else {
+            textToDisplay = "Draw!";
+        }
+    }
+
+    public static void updateScores() {
+
+    }
+
+    public static void updateNotifications() {
+
+    }
 
 
     @Override
@@ -75,8 +148,6 @@ public class Game extends Application {
             }
         }
 
-        // assure integer
-
 
         gameboard = newGame();
 
@@ -87,63 +158,89 @@ public class Game extends Application {
         primaryStage.show();
 
         //Computer's tile
-        Tile tile10 = new Tile(1,0,1,1);
-        gameboard.add(tile10, (int) tile10.getX(), (int) tile10.getY());
+        Tile computerTile = new Tile(1, 0, 1, 1);
+        gameboard.add(computerTile, (int) computerTile.getX(), (int) computerTile.getY());
 
         //Instructions tile
-        Tile tile11 = new Tile(1,1,1,1);
-        gameboard.add(tile11, (int) tile11.getX(), (int) tile11.getY());
+        Tile instructionTile = new Tile(1, 1, 1, 1);
+        gameboard.add(instructionTile, (int) instructionTile.getX(), (int) instructionTile.getY());
         Image instructionsImage = new Image("images/instrukcja.png");
         ImagePattern instructionsPattern = new ImagePattern(instructionsImage);
-        tile11.setFill(instructionsPattern);
+        instructionTile.setFill(instructionsPattern);
 
         //Player's tile
-        Tile tile12 = new Tile(1,2,1,1);
-        gameboard.add(tile12, (int) tile12.getX(), (int) tile12.getY());
+        Tile playerTile = new Tile(1, 2, 1, 1);
+        playerTile.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent e) {
+                if (e.getCode() == KeyCode.DIGIT1) {
+                    setRock(playerTile);
+                    computerMove(computerTile);
+                    checkRockEffect(playerTile, computerTile);
+                } if (e.getCode() == KeyCode.DIGIT2) {
+                    setPaper(playerTile);
+                    computerMove(computerTile);
+                    checkPaperEffect(playerTile, computerTile);
+                } if (e.getCode() == KeyCode.DIGIT3) {
+                    setScissors(playerTile);
+                    computerMove(computerTile);
+                    checkScissorsEffect(playerTile, computerTile);
+                } if (e.getCode() == KeyCode.DIGIT4) {
+                    setLizard(playerTile);
+                    computerMove(computerTile);
+                    checkLizardEffect(playerTile, computerTile);
+                } if (e.getCode() == KeyCode.DIGIT5) {
+                    setSpock(playerTile);
+                    computerMove(computerTile);
+                    checkSpockEffect(playerTile, computerTile);
+                }
+            }
+        });
+
+        gameboard.add(playerTile, (int) playerTile.getX(), (int) playerTile.getY());
+        playerTile.requestFocus();
+
 
         Text cSign = new Text("Computer:");
-        cSign.setFont(Font.font("Bauhaus 93", FontWeight.BOLD, 24));
+        cSign.setFont(Font.font("Broadway", FontWeight.BOLD, 24));
         GridPane.setHalignment(cSign, HPos.CENTER);
         GridPane.setValignment(cSign, VPos.CENTER);
         cSign.setFill(Color.BLACK);
         gameboard.add(cSign, 0, 0);
 
         Text cScore = new Text("" + cVictoryCounter);
-        cScore.setFont(Font.font("Bauhaus 93", FontWeight.BOLD, 34));
+        cScore.setFont(Font.font("Broadway", FontWeight.BOLD, 34));
         GridPane.setHalignment(cScore, HPos.CENTER);
         GridPane.setValignment(cScore, VPos.CENTER);
         cScore.setFill(Color.BLACK);
         gameboard.add(cScore, 2, 0);
 
         Text pSign = new Text(pName + ":");
-        pSign.setFont(Font.font("Bauhaus 93", FontWeight.BOLD, 24));
+        pSign.setFont(Font.font("Broadway", FontWeight.BOLD, 24));
         GridPane.setHalignment(pSign, HPos.CENTER);
         GridPane.setValignment(pSign, VPos.CENTER);
         pSign.setFill(Color.WHITE);
         gameboard.add(pSign, 0, 2);
 
         Text pScore = new Text("" + pVictoryCounter);
-        pScore.setFont(Font.font("Bauhaus 93", FontWeight.BOLD, 34));
+        pScore.setFont(Font.font("Broadway", FontWeight.BOLD, 34));
         GridPane.setHalignment(pScore, HPos.CENTER);
         GridPane.setValignment(pScore, VPos.CENTER);
         pScore.setFill(Color.WHITE);
         gameboard.add(pScore, 2, 2);
 
         Text instructions = new Text("Controls: \n1 - Rock \n2 - Paper \n3 - Scissors \n4 - Lizard \n5 - Spock \nx - exit \nn - restart");
-        instructions.setFont(Font.font("Bauhaus 93", FontWeight.BOLD, 28));
+        instructions.setFont(Font.font("Broadway", FontWeight.BOLD, 28));
         GridPane.setHalignment(instructions, HPos.CENTER);
-        GridPane.setValignment(instructions, VPos.CENTER);
+        GridPane.setValignment(instructions, VPos.TOP);
         instructions.setFill(Color.WHITE);
         gameboard.add(instructions, 1, 4);
-        
 
     }
-
-
 
 
     public static void main(String[] args) {
         launch(args);
     }
+
 
 }
