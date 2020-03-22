@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -18,8 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.util.Random;
 import java.util.Scanner;
 
 import static RPSLS.Tile.*;
@@ -29,11 +26,13 @@ public class Game extends Application {
     public static int TILE_SIZE = 150;
     public static int cVictoryCounter = 0;
     public static int pVictoryCounter = 0;
-    public static String textToDisplay = "Select the game mode";
+    public static String textToDisplay = "";
     public static Text notification = new Text("" + textToDisplay);
     public static GridPane gameboard = new GridPane();
     public static String pName = "";
     public static int victoriesLimit;
+    public static Text cScore = new Text("" + cVictoryCounter);
+    public static Text pScore = new Text("" + pVictoryCounter);
 
 
     public static GridPane newGame() {
@@ -113,12 +112,31 @@ public class Game extends Application {
     }
 
     public static void updateScores() {
-
+        cScore.setText("" + cVictoryCounter);
+        pScore.setText("" + pVictoryCounter);
     }
 
     public static void updateNotifications() {
-
+        notification.setText(textToDisplay);
     }
+
+    public static void checkWinner() {
+        if (pVictoryCounter == victoriesLimit || cVictoryCounter == victoriesLimit) {
+            if (pVictoryCounter > cVictoryCounter) {
+                textToDisplay = pName + " has won!!!";
+                notification.setText(textToDisplay);
+                gameboard.getChildren().remove(0);
+                gameboard.getChildren().remove(1);
+            } else {
+                textToDisplay = "Computer has won!!!";
+                notification.setText(textToDisplay);
+                gameboard.getChildren().remove(0);
+                gameboard.getChildren().remove(1);
+            }
+        }
+    }
+
+
 
 
     @Override
@@ -176,22 +194,37 @@ public class Game extends Application {
                     setRock(playerTile);
                     computerMove(computerTile);
                     checkRockEffect(playerTile, computerTile);
+                    updateScores();
+                    updateNotifications();
+                    checkWinner();
                 } if (e.getCode() == KeyCode.DIGIT2) {
                     setPaper(playerTile);
                     computerMove(computerTile);
                     checkPaperEffect(playerTile, computerTile);
+                    updateScores();
+                    updateNotifications();
+                    checkWinner();
                 } if (e.getCode() == KeyCode.DIGIT3) {
                     setScissors(playerTile);
                     computerMove(computerTile);
                     checkScissorsEffect(playerTile, computerTile);
+                    updateScores();
+                    updateNotifications();
+                    checkWinner();
                 } if (e.getCode() == KeyCode.DIGIT4) {
                     setLizard(playerTile);
                     computerMove(computerTile);
                     checkLizardEffect(playerTile, computerTile);
+                    updateScores();
+                    updateNotifications();
+                    checkWinner();
                 } if (e.getCode() == KeyCode.DIGIT5) {
                     setSpock(playerTile);
                     computerMove(computerTile);
                     checkSpockEffect(playerTile, computerTile);
+                    updateScores();
+                    updateNotifications();
+                    checkWinner();
                 }
             }
         });
@@ -201,13 +234,12 @@ public class Game extends Application {
 
 
         Text cSign = new Text("Computer:");
-        cSign.setFont(Font.font("Broadway", FontWeight.BOLD, 24));
+        cSign.setFont(Font.font("Broadway", FontWeight.BOLD, 22));
         GridPane.setHalignment(cSign, HPos.CENTER);
         GridPane.setValignment(cSign, VPos.CENTER);
         cSign.setFill(Color.BLACK);
         gameboard.add(cSign, 0, 0);
 
-        Text cScore = new Text("" + cVictoryCounter);
         cScore.setFont(Font.font("Broadway", FontWeight.BOLD, 34));
         GridPane.setHalignment(cScore, HPos.CENTER);
         GridPane.setValignment(cScore, VPos.CENTER);
@@ -215,13 +247,12 @@ public class Game extends Application {
         gameboard.add(cScore, 2, 0);
 
         Text pSign = new Text(pName + ":");
-        pSign.setFont(Font.font("Broadway", FontWeight.BOLD, 24));
+        pSign.setFont(Font.font("Broadway", FontWeight.BOLD, 22));
         GridPane.setHalignment(pSign, HPos.CENTER);
         GridPane.setValignment(pSign, VPos.CENTER);
         pSign.setFill(Color.WHITE);
         gameboard.add(pSign, 0, 2);
 
-        Text pScore = new Text("" + pVictoryCounter);
         pScore.setFont(Font.font("Broadway", FontWeight.BOLD, 34));
         GridPane.setHalignment(pScore, HPos.CENTER);
         GridPane.setValignment(pScore, VPos.CENTER);
@@ -229,11 +260,17 @@ public class Game extends Application {
         gameboard.add(pScore, 2, 2);
 
         Text instructions = new Text("Controls: \n1 - Rock \n2 - Paper \n3 - Scissors \n4 - Lizard \n5 - Spock \nx - exit \nn - restart");
-        instructions.setFont(Font.font("Broadway", FontWeight.BOLD, 28));
+        instructions.setFont(Font.font("Broadway", FontWeight.BOLD, 26));
         GridPane.setHalignment(instructions, HPos.CENTER);
         GridPane.setValignment(instructions, VPos.TOP);
         instructions.setFill(Color.WHITE);
         gameboard.add(instructions, 1, 4);
+
+        notification.setFont(Font.font("Broadway", FontWeight.BOLD, 26));
+        GridPane.setHalignment(pScore, HPos.CENTER);
+        GridPane.setValignment(pScore, VPos.CENTER);
+        notification.setFill(Color.WHITE);
+        gameboard.add(notification, 1, 3);
 
     }
 
